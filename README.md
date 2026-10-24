@@ -18,7 +18,7 @@
 
 ## 更新规则
 
-- GitHub Actions 每小时第 17 分钟检查三个来源，也可在 [Actions](https://github.com/kejun/docs-feed/actions/workflows/update-feed.yml) 点击 **Run workflow** 手动更新。定时任务可能因 GitHub 排队而延迟。
+- GitHub Actions 每天北京时间（Asia/Shanghai）早上 9:00 检查三个来源，也可在 [Actions](https://github.com/kejun/docs-feed/actions/workflows/update-feed.yml) 点击 **Run workflow** 手动更新。定时任务可能因 GitHub 排队而延迟。
 - 按文档最后修改时间倒序保留最近 100 篇，数量可在 `feed.json` 修改。
 - 发布时间和修改时间来自完整 Git 历史；定时检查本身不会改变订阅时间。文档编辑保留相同条目 ID，避免生成重复项；文件改名或移动会产生新 ID。
 - HTML 正文保留表格、列表、代码和图片；相对链接转换为绝对地址，移除脚本标签和危险属性。Mermaid 等依赖脚本的图表保留代码文本。
