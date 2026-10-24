@@ -1,0 +1,84 @@
+name: Update Atom feed
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - 'feed.json'
+      - 'requirements.txt'
+      - '.github/workflows/update-feed.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - 'feed.json'
+      - 'requirements.txt'
+      - '.github/workflows/update-feed.yml'
+
+concurrency:
+  group: atom-feed-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    name: Validate and update Atom feed
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test feed behavior
+        run: python -m unittest discover -s tests -v
+      - name: Read daily-rss
+        uses: actions/checkout@v4
+        with:
+          repository: kejun/daily-rss
+          ref: main
+          path: .sources/daily-rss
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read blogpost
+        uses: actions/checkout@v4
+        with:
+          repository: kejun/blogpost
+          ref: main
+          path: .sources/blogpost
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read daily-investor
+        uses: actions/checkout@v4
+        with:
+          repository: kejun/daily-investor
+          ref: main
+          path: .sources/daily-investor
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Build feed
+        run: python scripts/generate_feed.py
+      - name: Publish changed feed
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git add releases.atom
+          if git diff --cached --quiet; then
+            echo "No document changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update document feed"
+          git push origin HEAD:main

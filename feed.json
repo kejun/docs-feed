@@ -1,0 +1,21 @@
+{
+  "title": "Kejun 的文档更新",
+  "subtitle": "技术日报、技术文章与 AI 产品创意",
+  "home_url": "https://github.com/kejun/docs-feed",
+  "feed_url": "https://raw.githubusercontent.com/kejun/docs-feed/main/releases.atom",
+  "author": "kejun",
+  "max_entries": 100,
+  "exclude": [
+    ".*/**", "README.md", "**/README.md", "AGENTS.md", "**/AGENTS.md",
+    "SKILL.md", "**/SKILL.md", "LICENSE.md", "CHANGELOG.md",
+    "tests/**", "scripts/**"
+  ],
+  "sources": [
+    {"repository": "kejun/daily-rss", "directory": "daily-rss", "label": "技术日报", "prefix": ""},
+    {
+      "repository": "kejun/blogpost", "directory": "blogpost", "label": "技术文章", "prefix": "",
+      "exclude": ["NEW-REPOS-*.md", "PROMOTION-PACKAGE.md", "REPO-SETUP-GUIDE.md", "docs/translation-fidelity-pilot.md"]
+    },
+    {"repository": "kejun/daily-investor", "directory": "daily-investor", "label": "AI 产品创意", "prefix": "ideas/"}
+  ]
+}
