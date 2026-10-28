@@ -72,17 +72,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Build feed
+        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
         run: python scripts/generate_feed.py
       - name: Publish changed feed
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        run: |
-          git add releases.atom
-          if git diff --cached --quiet; then
-            echo "No document changes."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: update document feed"
-          git pull --rebase origin main
-          git push origin HEAD:main
+        run: python scripts/publish_feed.py
